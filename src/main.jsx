@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom/client";
-import * as servicerWorker from "../register-pwa.js";
+import * as servicerWorker from "../public/register-pwa.js";
 import App from "./App.jsx";
 import "./Styles/main.css";
 
