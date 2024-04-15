@@ -1,7 +1,7 @@
 "use strict";
 
 // Variables
-const CACHE_NAME = "PWA-v1";
+const CACHE_NAME = "PWA-v2";
 const ASSETS = ["/", "/index.html", "/manifest.json"];
 
 // Functions

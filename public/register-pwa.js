@@ -3,7 +3,8 @@ export async function register() {
   if (!isServicerWorkerSupported) return;
 
   try {
-    navigator.serviceWorker.register("./sw.js");
+    const register = await navigator.serviceWorker.register("sw.js");
+    console.log("Registered", register);
   } catch (err) {
     console.error("Error PWA", err);
   }
