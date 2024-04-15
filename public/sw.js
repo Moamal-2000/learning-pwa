@@ -29,14 +29,14 @@ async function getResponseFromCacheOrFetch(fetchEvent) {
   const cachedResponse = await caches.match(request);
   const fetchedResponse = await fetch(request);
 
-  if (!cachedResponse) {
-    const isGoogleExtension = request.url.includes("chrome-extension");
-    const cache = await caches.open(CACHE_NAME);
+  // if (!cachedResponse) {
+  //   const isGoogleExtension = request.url.includes("chrome-extension");
+  //   const cache = await caches.open(CACHE_NAME);
 
-    if (!isGoogleExtension) {
-      cache.put(request, fetchedResponse.clone());
-    }
-  }
+  //   if (!isGoogleExtension) {
+  //     cache.put(request, fetchedResponse.clone());
+  //   }
+  // }
 
   return cachedResponse ? cachedResponse : fetchedResponse;
 }
