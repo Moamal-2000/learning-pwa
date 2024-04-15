@@ -16,6 +16,9 @@ async function updateCacheVersion() {
     (cacheName) => cacheName !== CACHE_NAME
   );
 
+  console.log("cachesNames", cachesNames);
+  console.log("cachesToRemove", cachesToRemove);
+
   return Promise.all(
     cachesToRemove.map((cacheName) => caches.delete(cacheName))
   );
@@ -39,15 +42,15 @@ async function getResponseFromCacheOrFetch(fetchEvent) {
 }
 
 // Event functions
-function handleInstall(installEvent) {
+async function handleInstall(installEvent) {
   installEvent.waitUntil(cacheAssets());
 }
 
-function handleActivate(activateEvent) {
+async function handleActivate(activateEvent) {
   activateEvent.waitUntil(updateCacheVersion());
 }
 
-function handleFetch(fetchEvent) {
+async function handleFetch(fetchEvent) {
   fetchEvent.respondWith(getResponseFromCacheOrFetch(fetchEvent));
 }
 
