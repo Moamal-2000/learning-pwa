@@ -1,16 +1,17 @@
-const NotiButton = () => {
-  async function sendNotification() {
-    if (window.PushManager) {
-      navigator.serviceWorker.ready.then((registration) => {
-        registration.showNotification("notification title", {
-          body: "This is my notification message",
-        });
-      });
-    }
-  }
+import { sendNotification } from "../Functions/pwa/notifiction";
 
+const NotiButton = () => {
   return (
-    <button className="notiButton" type="button" onClick={sendNotification}>
+    <button
+      className="notiButton"
+      type="button"
+      onClick={() =>
+        sendNotification(
+          "This is my notification title",
+          "This is my notification message"
+        )
+      }
+    >
       Send Notification
     </button>
   );
