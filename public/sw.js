@@ -1,56 +1,54 @@
 "use strict";
 
-// Variables
-const CACHE_NAME = "PWA-v3";
+const CACHE_NAME = "pwa-v1";
 const ASSETS = ["/", "/index.html", "/manifest.json"];
 
-// Functions
-async function cacheAssets() {
-  const cache = caches.open(CACHE_NAME);
-  (await cache).addAll(ASSETS);
+async function openCache() {
+  const cache = await caches.open(CACHE_NAME);
+  await cache.addAll(ASSETS);
 }
 
-async function updateCacheVersion() {
-  const cachesNames = await caches.keys();
-  const cachesToRemove = cachesNames.filter(
-    (cacheName) => cacheName !== CACHE_NAME
-  );
-
-  return Promise.all(
-    cachesToRemove.map((cacheName) => caches.delete(cacheName))
-  );
-}
-
-async function getResponseFromCacheOrFetch(fetchEvent) {
+async function getDataFromCacheOrFetch(fetchEvent) {
   const request = fetchEvent.request;
   const cachedResponse = await caches.match(request);
   const fetchedResponse = await fetch(request);
+  const response = cachedResponse ? cachedResponse : fetchedResponse;
 
-  if (!cachedResponse) {
-    const isGoogleExtension = request.url.includes("chrome-extension");
-    const cache = await caches.open(CACHE_NAME);
-
-    if (!isGoogleExtension) {
-      cache.put(request, fetchedResponse.clone());
-    }
-  }
-
-  return cachedResponse ? cachedResponse : fetchedResponse;
+  if (!cachedResponse) storeResponseInCache(request, response);
+  return response;
 }
 
-// Event functions
-async function handleInstall(installEvent) {
-  installEvent.waitUntil(cacheAssets());
+async function storeResponseInCache(request, response) {
+  const isGoogleExtension = request.url.includes("chrome-extension");
+  if (isGoogleExtension) return;
+
+  const cache = await caches.open(CACHE_NAME);
+  cache.add(request, response);
 }
 
-async function handleActivate(activateEvent) {
+async function updateCacheVersion() {
+  const cacheKeys = await caches.keys();
+  const oldCacheKeys = cacheKeys.filter((cacheKey) => cacheKey !== CACHE_NAME);
+  Promise.all(oldCacheKeys.map((cacheKey) => caches.delete(cacheKey)));
+}
+
+function handleInstall(installEvent) {
+  installEvent.waitUntil(openCache());
+}
+
+function handleFetches(fetchEvent) {
+  fetchEvent.respondWith(getDataFromCacheOrFetch(fetchEvent));
+}
+
+function handleActivate(activateEvent) {
   activateEvent.waitUntil(updateCacheVersion());
 }
 
-async function handleFetch(fetchEvent) {
-  fetchEvent.respondWith(getResponseFromCacheOrFetch(fetchEvent));
+function handlePush(pushEvent) {
+  pushEvent.waitUntil(self.registration.showNotification());
 }
 
 self.addEventListener("install", handleInstall);
 self.addEventListener("activate", handleActivate);
-self.addEventListener("fetch", handleFetch);
+self.addEventListener("fetch", handleFetches);
+self.addEventListener("push", handlePush);

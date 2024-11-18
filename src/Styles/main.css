@@ -30,3 +30,13 @@ body {
   background-color: rgb(68, 68, 68);
   border-radius: 5px;
 }
+
+.notiButton {
+  padding: 10px 20px;
+  font-size: 1rem;
+  margin-top: 20px;
+  margin-left: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  outline: none;
+}

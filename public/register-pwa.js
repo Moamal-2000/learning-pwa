@@ -1,11 +1,22 @@
 export async function register() {
-  const isServicerWorkerSupported = "serviceWorker" in navigator;
-  if (!isServicerWorkerSupported) return;
+  if (!"serviceWorker" in navigator) return;
 
   try {
-    const register = await navigator.serviceWorker.register("sw.js");
-    console.log("Registered", register);
+    navigator.serviceWorker.register("./sw.js");
+    // console.log("Registered");
   } catch (err) {
-    console.error("Error PWA", err);
+    console.err("Error in registeration", err);
   }
 }
+
+async function checkNotificationPermission() {
+  const permission = await Notification.requestPermission();
+
+  if (permission === "granted") {
+    console.log("Notification allowed");
+  } else {
+    console.log("Notification is not allowed");
+  }
+}
+
+checkNotificationPermission()
